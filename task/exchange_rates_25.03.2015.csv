@@ -1,0 +1,10 @@
+pk, bank_code, currency_code, buy_rate, sell_rate
+1, Credit_Agricode, usd, 25.5000, 25.9000
+2, OTPBank, usd, 25.0000, 27.0000
+3, Praveks, usd, 24.0000, 26.5000
+4, PUMB, usd, 25.0000, 26.5000
+5, PrivatBank, usd, 21.0000, 26.50
+6, Credit_Agricole, eur, 26.0000, 29.5000
+7, OTPBank, eur, 27.2000, 29.6000
+8, Praveks, eur, 27.0000, 28.5000
+9, PrivatBank, eur, 23.0000, 28.9855
