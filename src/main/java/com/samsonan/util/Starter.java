@@ -1,5 +1,7 @@
 package com.samsonan.util;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -32,12 +34,12 @@ public class Starter {
 			LOG.info("mapper: #" + key + " result:" + strXmlResult);
 			
 			String xsdFile = "C:\\working.folder\\workspace-sts\\hadoop-experiments\\task\\exchange_rates.xsd"; 
-			service.validateXmlString(strXmlResult, xsdFile);
+			service.validateXmlString(strXmlResult, new File(xsdFile));
 
 			LOG.info("mapper: #" + key + " validation: OK");
 
-			String xsltFile = "C:\\working.folder\\workspace-sts\\hadoop-experiments\\task\\exchange_rates.xsl";
-			String transformResult = service.transformXml(strXmlResult, xsltFile);
+			String xslFile = "C:\\working.folder\\workspace-sts\\hadoop-experiments\\task\\exchange_rates.xsl";
+			String transformResult = service.transformXml(strXmlResult, new File(xslFile));
 
 			LOG.info("reducer: #" + key + " transformResult:" + transformResult);
 

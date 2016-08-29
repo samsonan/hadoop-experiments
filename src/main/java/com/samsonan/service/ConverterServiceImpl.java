@@ -57,17 +57,18 @@ public class ConverterServiceImpl implements ConverterService {
 	}
 
 	@Override
-	public void validateXmlString(String xmlString, String xsdPath) throws ConverterException {
+	public void validateXmlString(String xmlString, File xsdFile) throws ConverterException {
 		
 		try {
 			
+			LOG.info("validate XML:"+xmlString+"; xsdFile:"+xsdFile); 
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			Schema schema = factory.newSchema(new File(xsdPath));
+			Schema schema = factory.newSchema(xsdFile);
 			Validator validator = schema.newValidator();
 			validator.validate(new StreamSource(new StringReader(xmlString)));
 			
 		} catch (SAXException | IOException ex) {
-			throw new ConverterException("Error validating XML", ex);
+			throw new ConverterException("Error validating XML using given xsd file:" + xsdFile, ex);
 		}
 	}
 
@@ -89,20 +90,20 @@ public class ConverterServiceImpl implements ConverterService {
 		}
 	}
 
-	public String transformXml(String xmlString, String xslPath) throws ConverterException {
+	public String transformXml(String xmlString, File xslFile) throws ConverterException {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		
 		try {
 			
 			StringWriter outWriter = new StringWriter();
 
-			Transformer transformer = transformerFactory.newTransformer(new StreamSource(new File(xslPath)));
+			Transformer transformer = transformerFactory.newTransformer(new StreamSource(xslFile));
 			transformer.transform(new StreamSource(new StringReader(xmlString)), new StreamResult(outWriter));
 			
 			return outWriter.toString();
 			
 		} catch (Exception ex) {
-			throw new ConverterException("Cannot transform XML string: " + xmlString + " using given xsl:" + xslPath, ex);
+			throw new ConverterException("Cannot transform XML string: " + xmlString + " using given xsl file:" + xslFile, ex);
 		}
 	}
 

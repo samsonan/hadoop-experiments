@@ -6,9 +6,9 @@
 	<xsl:output method="xml" encoding="UTF-8"/>
 
 	<!-- deep copy, including attributes. just in case -->
-    <xsl:template match="@*|node()">
-        <xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
-    </xsl:template>
+	<xsl:template match="@*|node()">
+        	<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
+    	</xsl:template>
 	
 	<!-- don't copy bank_code -->
 	<xsl:template match="bank_code"/>

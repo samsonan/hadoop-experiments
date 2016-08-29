@@ -1,5 +1,7 @@
 package com.samsonan.service;
 
+import java.io.File;
+
 public interface ConverterService {
 
 	/**
@@ -18,7 +20,7 @@ public interface ConverterService {
 	 * @param xsdPath Location of XSD schema
 	 * @throws ConverterException
 	 */
-	void validateXmlString (String xmlString, String xsdPath) throws ConverterException;
+	void validateXmlString (String xmlString, File xsdFile) throws ConverterException;
 	
 	/**
 	 * Apply XSL transformation to XML
@@ -27,5 +29,5 @@ public interface ConverterService {
 	 * @return Result of transformation, as String
 	 * @throws ConverterException
 	 */
-	String transformXml(String xmlString, String xslPath) throws ConverterException;
+	String transformXml(String xmlString, File xslFile) throws ConverterException;
 }
