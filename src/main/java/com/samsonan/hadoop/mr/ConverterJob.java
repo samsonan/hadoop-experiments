@@ -11,12 +11,23 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+/**
+ * MapReduce Driver class.
+ * @author asamsonov
+ *
+ */
 public class ConverterJob extends Configured implements Tool {
 
-	private static String INSTANCE_NAME = "csv-xml-xslt converter";
+	private final static String INSTANCE_NAME = "exchange rates converter";
+
+	private final static String CONFIG_PARAM_NAME = "configuration.name";
+	private final static String CONFIG_PARAM_VALUE = "exchange_rates"; //TODO: make the input argument
+	
+	private final static String CONF_PATH = "/user/cloudera/converter/";	
 	
 	public static void main(String[] args) throws Exception {
 		int exitCode = ToolRunner.run(new ConverterJob(), args);
@@ -26,7 +37,9 @@ public class ConverterJob extends Configured implements Tool {
 	@Override
 	public int run(String[] args) throws Exception {
 		
-		Configuration conf = new Configuration();
+		Configuration conf = getConf();
+		
+		conf.set(CONFIG_PARAM_NAME, CONFIG_PARAM_VALUE);
 		
 		Job job = new Job(conf, INSTANCE_NAME);
 		job.setJarByClass(ConverterJob.class);
@@ -34,10 +47,13 @@ public class ConverterJob extends Configured implements Tool {
 		job.setReducerClass(XsltReducer.class);
 		job.setOutputKeyClass(LongWritable.class);
 		job.setOutputValueClass(Text.class);
-		
-		DistributedCache.addCacheFile(new URI("/user/cloudera/converter/exchange_rates.conf#exchange_rates.conf"), job.getConfiguration());
-		DistributedCache.addCacheFile(new URI("/user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd"), job.getConfiguration());
-		DistributedCache.addCacheFile(new URI("/user/cloudera/converter/exchange_rates.xsl#exchange_rates.xsl"), job.getConfiguration());
+
+	    job.setOutputFormatClass(SequenceFileOutputFormat.class);
+	    
+	    //e.g. /user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd
+		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".header#" + CONFIG_PARAM_VALUE + ".header"), job.getConfiguration());
+		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsl#" + CONFIG_PARAM_VALUE + ".xsl"), job.getConfiguration());
+		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsd#" + CONFIG_PARAM_VALUE + ".xsd"), job.getConfiguration());
 	
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));

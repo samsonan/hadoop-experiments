@@ -33,12 +33,12 @@ public class Starter {
 			LOG.info("mapper: #" + key + " transformation: OK");
 			LOG.info("mapper: #" + key + " result:" + strXmlResult);
 			
-			String xsdFile = "C:\\working.folder\\workspace-sts\\hadoop-experiments\\task\\exchange_rates.xsd"; 
+			String xsdFile = "C:\\workspace\\workspace-sts-3.7.2.RELEASE\\hadoop-experiments\\resources\\exchange_rates.xsd"; 
 			service.validateXmlString(strXmlResult, new File(xsdFile));
 
 			LOG.info("mapper: #" + key + " validation: OK");
 
-			String xslFile = "C:\\working.folder\\workspace-sts\\hadoop-experiments\\task\\exchange_rates.xsl";
+			String xslFile = "C:\\workspace\\workspace-sts-3.7.2.RELEASE\\hadoop-experiments\\resources\\exchange_rates.xsl";
 			String transformResult = service.transformXml(strXmlResult, new File(xslFile));
 
 			LOG.info("reducer: #" + key + " transformResult:" + transformResult);

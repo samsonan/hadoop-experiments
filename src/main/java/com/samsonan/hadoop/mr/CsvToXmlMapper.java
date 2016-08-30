@@ -1,13 +1,9 @@
 package com.samsonan.hadoop.mr;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
-
-import org.apache.hadoop.filecache.DistributedCache;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -26,6 +22,8 @@ import com.samsonan.service.GuiceModule;
  * 2. Validate XML with given schema
  * 3. Output <id, XML as Text>
  * 
+ * Current solution is generic
+ * 
  * @author Andrey Samsonov (samsonan)
  *
  */
@@ -33,61 +31,40 @@ public class CsvToXmlMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
 	private static Logger LOG = Logger.getLogger(CsvToXmlMapper.class);
 
-	//TODO: get it from file
-	private static String [] HEADER_LIST = {"pk", "bank_code", "currency_code","buy_rate", "sell_rate"};
-	private static String XML_ROOT_NAME = "exchange_rates";
-	private static String XSD_FILE_NAME = "exchange_rates.xsd";
+	private final static String CONFIG_PARAM_NAME = "configuration.name";
+	
+	private String confName;  // e.g. exchange_rates
+	private String [] headerList; // e.g. pk, bank_code, currency_code, etc
 	
 	private File xsdFile;
 	private ConverterService service;
-	
+	private boolean validateXML = true;
+		
 	@Override
 	protected void setup(Context context) throws IOException, InterruptedException {
 		Injector injector = Guice.createInjector(new GuiceModule());
 		service = injector.getInstance( ConverterService.class );
 
-		xsdFile = new File(XSD_FILE_NAME); // read from cache
+		confName = context.getConfiguration().get(CONFIG_PARAM_NAME);
 		
-//		if (!xsdFile.exists())
-//			throw new IOException("Mandatory file " + XSD_FILE_NAME + " is not found in mapper!");
-		
-//		try{
-//			LOG.info("xsd file 2 exists:"+xsdFile2.exists());
-//			LOG.info("xsd file 2 can read:"+xsdFile2.canRead());
-//		}catch(Exception e){
-//			LOG.error("cannot read xsd file:"+e.getMessage());
-//		}
-		
-		
-		try{
-			Properties prop = new Properties();
-			FileInputStream fis = new FileInputStream("exchange_rates.conf");
-			prop.load(fis);
-			LOG.info("root:"+prop.getProperty("root"));
-			LOG.info("tags:"+prop.getProperty("tags"));
-			fis.close();
-		}catch(Exception e){
-			LOG.error("cannot read properties file:"+e.getMessage());
-		}
-		
-		/*
-	   	try{
-	   		
-    		Path[] cacheFiles = DistributedCache.getLocalCacheFiles(context.getConfiguration());
+		String xsdFileName = confName+".xsd";
+		xsdFile = new File(xsdFileName);
 
-    		if(cacheFiles != null && cacheFiles.length > 0) {
-    			for(Path file : cacheFiles) {
-    				LOG.info("cache file found: "+file+"; name:"+file.getName());
-    				if (file.getName().equals("exchange_rates.xsd")) {
-    					xsdFile = new File(file.toString());
-    					LOG.info("xsdFile: " + xsdFile.exists());
-    				}
-    			}
-    		} else throw new IOException("no cached files found in mapper");
-    		
-    	} catch(IOException ex) {
-    		LOG.error("Error reading distributed cache in mapper", ex);
-    	}*/		
+		LOG.info("mapper setup: configuration name:" + confName +"; xsd file exists:"+xsdFile.exists());
+		
+		if (!xsdFile.exists()) {
+			LOG.error("Schema file " + xsdFileName + " doesn't exist! Validation will be skipped!");
+			validateXML = false;
+		}
+
+		String headerFilename = confName+".header";
+		
+		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(headerFilename))) {
+	        headerList = bufferedReader.readLine().split(",");
+		}catch(Exception ex){
+			throw new IOException("Cannot read the mandatory header file "+headerFilename, ex);
+		}
+
 	}
 	
 	@Override
@@ -97,11 +74,12 @@ public class CsvToXmlMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
 		try {
 			
-			if (key.get() != 0 && !value.toString().startsWith(HEADER_LIST[0])) {
+			if (key.get() != 0 && !value.toString().startsWith(headerList[0])) {
 
-				String strXmlResult = service.convertCsvToPlainXml(value.toString(), XML_ROOT_NAME, HEADER_LIST);
+				String strXmlResult = service.convertCsvToPlainXml(value.toString(), confName, headerList);
 
-				service.validateXmlString(strXmlResult, xsdFile);
+				if (validateXML)
+					service.validateXmlString(strXmlResult, xsdFile);
 
 				LOG.info("mapper: #" + key + " result:" + strXmlResult);
 
@@ -109,7 +87,7 @@ public class CsvToXmlMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 			}
 			
 		} catch (ConverterException ex) {
-			LOG.error("Cannot transform CSV string " + value + " to XML",ex);
+			LOG.error("Cannot convert CSV string " + value + " to valid XML",ex);
 		}
 	}
 }
