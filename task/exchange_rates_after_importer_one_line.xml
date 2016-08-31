@@ -1,7 +1,0 @@
-<exchange_rates>
-	<pk>1</pk>
-	<bank_code>Credit_Agricode</bank_code>
-	<currency_code>usd</currency_code>
-	<buy_rate>25.5000</buy_rate>
-	<sell_rate>25.9000</sell_rate>
-</exchange_rates>
