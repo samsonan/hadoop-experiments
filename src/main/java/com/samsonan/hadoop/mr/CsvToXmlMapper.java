@@ -17,7 +17,7 @@ import com.samsonan.service.ConverterService;
 import com.samsonan.service.GuiceModule;
 
 /**
- * Mapper that does the following, given <id, CSV string as Text>
+ * Generic Mapper that does the following, given <id, CSV string as Text>
  * 1. Transform CSV to Plain XML 
  * 2. Validate XML with given schema
  * 3. Output <id, XML as Text>

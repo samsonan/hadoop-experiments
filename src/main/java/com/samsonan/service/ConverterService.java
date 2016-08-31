@@ -2,6 +2,11 @@ package com.samsonan.service;
 
 import java.io.File;
 
+/**
+ * Service defining "business logic" layer 
+ * @author asamsonov
+ *
+ */
 public interface ConverterService {
 
 	/**

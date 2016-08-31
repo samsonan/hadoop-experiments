@@ -4,6 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Methods used in XSL transformations
+ * @author asamsonov
+ *
+ */
 public class XmlUtil {
 
 	public static String getCurrentDate() {

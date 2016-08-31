@@ -21,6 +21,7 @@ import com.samsonan.service.GuiceModule;
 
 /**
  * Apply XSL transformation to XMLs in the values
+ * Write output to sequence files
  * 
  * @author Andrey Samsonov (samsonan)
  *
@@ -72,11 +73,6 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 					Writer.file(outputFilePath), 
 					Writer.keyClass(key.getClass()),
 					Writer.valueClass(Text.class));
-
-//					Writer.bufferSize(fs.getConf().getInt("io.file.buffer.size", 4096)),
-//					Writer.replication(fs.getDefaultReplication()), Writer.blockSize(1073741824),
-//					Writer.compression(SequenceFile.CompressionType.BLOCK, new DefaultCodec()),
-//					Writer.progressable(null), Writer.metadata(new Metadata()));
 
 			LOG.info("reducer. SequenceFile writer is created");
 			

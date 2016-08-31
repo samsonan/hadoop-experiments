@@ -24,9 +24,12 @@ public class ConverterJob extends Configured implements Tool {
 
 	private final static String INSTANCE_NAME = "exchange rates converter";
 
+	//parameter which defines file names for different input data types 
+	//  e.g "exchange_rates" or "contracts"
 	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
 	private final static String CONFIG_PARAM_VALUE = "exchange_rates";
 	
+	//path to configuration files (file with header columns, xsl, xsd) on hdfs
 	private final static String CONF_PATH = "/user/cloudera/converter/";	
 	
 	public static void main(String[] args) throws Exception {
@@ -51,6 +54,7 @@ public class ConverterJob extends Configured implements Tool {
 	    job.setOutputFormatClass(SequenceFileOutputFormat.class);
 	    
 	    //e.g. /user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd
+	    //putting files to cahce to use later in map and reducer jobs
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".header#" + CONFIG_PARAM_VALUE + ".header"), job.getConfiguration());
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsl#" + CONFIG_PARAM_VALUE + ".xsl"), job.getConfiguration());
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsd#" + CONFIG_PARAM_VALUE + ".xsd"), job.getConfiguration());

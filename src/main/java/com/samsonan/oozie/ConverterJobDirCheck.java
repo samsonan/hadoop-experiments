@@ -6,6 +6,11 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
+/**
+ * Class for oozie workflow that checks if the input dir exists and that it is not empty.  
+ * @author asamsonov
+ *
+ */
 public class ConverterJobDirCheck {
 
 	private static Logger LOG = Logger.getLogger(ConverterJobDirCheck.class);
