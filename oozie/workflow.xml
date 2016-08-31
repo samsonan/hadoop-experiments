@@ -1,0 +1,96 @@
+<workflow-app xmlns="uri:oozie:workflow:0.1" name="exchange-rates-mr-wf">
+	<start to="ConverterJobDirCheck"/>
+	<action name="ConverterJobDirCheck">
+		<java>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>		
+			<main-class>com.samsonan.oozie.ConverterJobDirCheck</main-class> 
+            <arg>${inputDir}</arg> 
+		</java>
+		<ok to="ExchangeRatesConverterJob"/>
+		<error to="checkFail"/>			
+	</action>
+	<action name="ExchangeRatesConverterJob">
+		<map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+				<delete path="${outputDir}"/>
+            </prepare>
+			<configuration>
+                <property>
+                    <name>mapred.mapper.new-api</name>
+                    <value>true</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.new-api</name>
+                    <value>true</value>
+                </property>			
+				<property>
+					<name>mapreduce.map.class</name>
+					<value>com.samsonan.hadoop.mr.CsvToXmlMapper</value>
+				</property>
+				<property>
+					<name>mapreduce.reduce.class</name>
+					<value>com.samsonan.hadoop.mr.XsltReducer</value>
+				</property>
+				<property>
+					<name>mapred.mapoutput.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value>
+				</property>
+                <property>
+                    <name>mapred.mapoutput.value.class</name>
+                    <value>org.apache.hadoop.io.Text</value>
+                </property>
+                <property>
+                    <name>mapred.output.key.class</name>
+                    <value>org.apache.hadoop.io.LongWritable</value>
+                </property>
+                <property>
+					<name>mapred.output.value.class</name>
+                    <value>org.apache.hadoop.io.Text</value>
+                </property>
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${inputDir}</value>
+                </property>
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${outputDir}</value>
+                </property>
+                <property>
+                    <name>mapreduce.job.acl-view-job</name>
+					<value>*</value>
+                </property>
+                <property>
+					<name>oozie.launcher.mapreduce.job.acl-view-job</name>
+                    <value>*</value>
+                </property>
+                <!--property>
+                    <name>oozie.use.system.libpath</name>
+                    <value>false</value>
+                </property-->
+                <!--property>
+                    <name>oozie.libpath</name>
+                    <value>${appPath}/lib</value>
+                </property-->
+				<property>
+                    <name>converter.configuration.name</name>
+                    <value>exchange_rates</value>
+                </property>				
+			</configuration>
+			<file>/user/cloudera/converter/exchange_rates.header#exchange_rates.header</file>
+			<file>/user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd</file>
+			<file>/user/cloudera/converter/exchange_rates.xsl#exchange_rates.xsl</file>
+		</map-reduce>
+		<ok to="end"/>
+		<error to="fail"/>		
+	</action>
+	<kill name="checkFail">
+		<message>Converter Precondition Check failed, [${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>	
+	<kill name="fail">
+		<message>Converter Map/Reduce failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+	</kill>	
+	<end name="end"/>
+</workflow-app>

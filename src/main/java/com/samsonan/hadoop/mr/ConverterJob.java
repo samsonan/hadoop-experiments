@@ -16,7 +16,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
 /**
- * MapReduce Driver class.
+ * Exchange Rates MapReduce Driver class.
  * @author asamsonov
  *
  */
@@ -24,8 +24,8 @@ public class ConverterJob extends Configured implements Tool {
 
 	private final static String INSTANCE_NAME = "exchange rates converter";
 
-	private final static String CONFIG_PARAM_NAME = "configuration.name";
-	private final static String CONFIG_PARAM_VALUE = "exchange_rates"; //TODO: make the input argument
+	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
+	private final static String CONFIG_PARAM_VALUE = "exchange_rates";
 	
 	private final static String CONF_PATH = "/user/cloudera/converter/";	
 	

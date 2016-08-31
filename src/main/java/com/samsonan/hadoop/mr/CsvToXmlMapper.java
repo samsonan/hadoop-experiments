@@ -31,7 +31,7 @@ public class CsvToXmlMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
 	private static Logger LOG = Logger.getLogger(CsvToXmlMapper.class);
 
-	private final static String CONFIG_PARAM_NAME = "configuration.name";
+	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
 	
 	private String confName;  // e.g. exchange_rates
 	private String [] headerList; // e.g. pk, bank_code, currency_code, etc
@@ -46,6 +46,9 @@ public class CsvToXmlMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 		service = injector.getInstance( ConverterService.class );
 
 		confName = context.getConfiguration().get(CONFIG_PARAM_NAME);
+		
+		if (confName == null)
+			throw new IOException("Mandatory parameter " + CONFIG_PARAM_NAME +" is undefined");
 		
 		String xsdFileName = confName+".xsd";
 		xsdFile = new File(xsdFileName);

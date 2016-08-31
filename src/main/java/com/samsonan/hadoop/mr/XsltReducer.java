@@ -29,7 +29,7 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 
 	private static Logger LOG = Logger.getLogger(CsvToXmlMapper.class);
 
-	private final static String CONFIG_PARAM_NAME = "configuration.name";
+	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
 
 	private String confName; // e.g. exchange_rates
 
@@ -45,6 +45,9 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 
 		confName = context.getConfiguration().get(CONFIG_PARAM_NAME);
 
+		if (confName == null)
+			throw new IOException("Mandatory parameter " + CONFIG_PARAM_NAME +" is undefined");
+		
 		String xslFileName = confName + ".xsl";
 		xslFile = new File(xslFileName);
 
