@@ -31,7 +31,8 @@ All paths and URLs are applicable for Cloudera Quickstart VM 5.5
 
   2. Reduce:
     - Apply XSL transformation to XMLs in the values
-    - Write output to hadoop sequence file
+    - Write resulting XML to sequence files
+	- Write <key, seq file name> to reducer output
   
   Both mapper and reducer are generic, not specific to incoming data. In order to work:
   1. "converter.configuration.name" parameter should be set with the simlink names of XSD/XSL/HEADER files
@@ -42,7 +43,7 @@ All paths and URLs are applicable for Cloudera Quickstart VM 5.5
    Examples: /conf/exchange_rates/
    
   Dependencies & libs:
-  /saxon9.jar and saxon9-dom.jar - should be provided manually, cannot use maven repository, as saxon HE-edition doesnt allow to use java methods in XSLT
+  /lib/saxon9.jar and saxon9-dom.jar - should be provided manually, cannot use maven repository, as saxon HE-edition doesnt allow to use java methods in XSLT
 
   MR web console: http://quickstart.cloudera:19888/jobhistory/app
   

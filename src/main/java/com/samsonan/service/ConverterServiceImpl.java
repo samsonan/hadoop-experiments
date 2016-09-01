@@ -24,7 +24,6 @@ import org.xml.sax.SAXException;
 
 public class ConverterServiceImpl implements ConverterService {
 
-	@SuppressWarnings("unused")
 	private static Logger LOG = Logger.getLogger(ConverterServiceImpl.class);
 
 	public static String CSV_SPLIT_BY = ",";
@@ -43,6 +42,12 @@ public class ConverterServiceImpl implements ConverterService {
 			doc.appendChild(rootElement);
 
 			String[] fieldList = csvString.split(CSV_SPLIT_BY);
+			
+			if (fieldList.length != tagNames.length) {
+				throw new IOException("Wrong column count in input file! CSV values cnt:" + fieldList.length
+						+ "; expected cnt:" + tagNames.length);
+			}
+			
 			for (int i = 0; i < fieldList.length; i++) {
 				Element pkElement = doc.createElement(tagNames[i]);
 				pkElement.appendChild(doc.createTextNode(fieldList[i].trim()));
@@ -60,7 +65,6 @@ public class ConverterServiceImpl implements ConverterService {
 	public void validateXmlString(String xmlString, File xsdFile) throws ConverterException {
 		
 		try {
-			
 			LOG.info("validate XML:"+xmlString+"; xsdFile:"+xsdFile); 
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			Schema schema = factory.newSchema(xsdFile);

@@ -21,7 +21,8 @@ import com.samsonan.service.GuiceModule;
 
 /**
  * Apply XSL transformation to XMLs in the values
- * Write output to sequence files
+ * Write resulting XML to sequence files
+ * Write <key, seq file name> to reducer output
  * 
  * @author Andrey Samsonov (samsonan)
  *
@@ -62,7 +63,8 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 	public void reduce(LongWritable key, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {
 
-		Path outputFilePath = new Path(FileOutputFormat.getOutputPath(context).toUri()+"/"+key+".seq");
+		//Path outputFilePath = new Path(FileOutputFormat.getOutputPath(context).toUri()+"/"+key+".seq");
+		Path outputFilePath = new Path(key+".seq");
 		LOG.info("reducer: {key:" + key + ". output file:"+outputFilePath+"}");
 		
 		SequenceFile.Writer writer = null;
@@ -85,6 +87,9 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 					LOG.error("Cannot transform given XML: " + val, e);
 				}
 			}
+			
+			context.write(key, new Text(outputFilePath.toString()));
+			
 		} finally {
 			IOUtils.closeStream(writer);
 		}
