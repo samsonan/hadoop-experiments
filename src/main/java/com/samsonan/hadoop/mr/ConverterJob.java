@@ -54,7 +54,7 @@ public class ConverterJob extends Configured implements Tool {
 	    job.setOutputFormatClass(SequenceFileOutputFormat.class);
 	    
 	    //e.g. /user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd
-	    //putting files to cahce to use later in map and reducer jobs
+	    //putting files in the  cache to use later in map/reduce jobs
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".header#" + CONFIG_PARAM_VALUE + ".header"), job.getConfiguration());
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsl#" + CONFIG_PARAM_VALUE + ".xsl"), job.getConfiguration());
 		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsd#" + CONFIG_PARAM_VALUE + ".xsd"), job.getConfiguration());

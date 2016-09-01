@@ -33,7 +33,7 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 
 	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
 
-	private String confName; // e.g. exchange_rates
+	private String confName; // e.g. "exchange_rates"
 
 	private File xslFile;
 	private ConverterService service;
@@ -63,8 +63,7 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 	public void reduce(LongWritable key, Iterable<Text> values, Context context)
 			throws IOException, InterruptedException {
 
-		//Path outputFilePath = new Path(FileOutputFormat.getOutputPath(context).toUri()+"/"+key+".seq");
-		Path outputFilePath = new Path(key+".seq");
+		Path outputFilePath = new Path(FileOutputFormat.getOutputPath(context).toUri()+"/"+key+".seq");
 		LOG.info("reducer: {key:" + key + ". output file:"+outputFilePath+"}");
 		
 		SequenceFile.Writer writer = null;
@@ -82,6 +81,7 @@ public class XsltReducer extends Reducer<LongWritable, Text, LongWritable, Text>
 				try {
 					LOG.info("  #" + key + " value:" + val);
 					String outputXML = service.transformXml(val.toString(), xslFile);
+					LOG.info("  #" + key + " XML after transform:" + val);
 					writer.append(key, new Text(outputXML));
 				} catch (ConverterException e) {
 					LOG.error("Cannot transform given XML: " + val, e);

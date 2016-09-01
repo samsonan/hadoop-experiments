@@ -52,3 +52,10 @@ All paths and URLs are applicable for Cloudera Quickstart VM 5.5
   $ export HADOOP_CLASSPATH=/local/path/to/saxon9-9.1.0.6.jar:/local/path/to/saxon9-dom-9.1.0.6.jar
   $ hadoop jar hadoop-experiments-0.1.2-SNAPSHOT.jar -libjars $LIBJARS  /hdfs/input/path/ /hdfs/output/path/
 
+
+Tests (simplified):
+ 1. MRUnit - testing MR methods
+    in order to run on WIN, hadoop.home.dir sys var should be set for hadoop dir, so that hadoop.home.dir/bin contains winutil.exe
+    -Dhadoop.home.dir=C:\tools\hadoop-2.7.1  
+    
+ 2. Groovy Spock - testing business logic and service methods, not related to MR/hadoop 
