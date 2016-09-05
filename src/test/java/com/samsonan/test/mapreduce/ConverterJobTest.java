@@ -110,17 +110,6 @@ public class ConverterJobTest {
 	}	
 
 	/**
-	 * Exception in method (validation) wont throw exception, but output is empty
-	 * @throws IOException
-	 */
-	@Test
-	public void testMapperValidation() throws IOException {
-		mapDriver.withInput(new LongWritable(5), new Text(UseCases.CASE9_VIOLATEXSD_XML));
-		final List<Pair<LongWritable, Text>> result = mapDriver.run();
-		assertThat(result, hasSize(0));
-	}
-	
-	/**
 	 * One valid and one invalid case on reducer with the same key
 	 * Output is created, invalid case leads to the error but it wont break processing
 	 * @throws IOException
