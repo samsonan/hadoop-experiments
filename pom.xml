@@ -106,6 +106,10 @@
 						<additionalClasspathElement>${project.basedir}/lib/saxon9-9.1.0.6.jar</additionalClasspathElement>
 						<additionalClasspathElement>${project.basedir}/lib/saxon9-dom-9.1.0.6.jar</additionalClasspathElement>
 					</additionalClasspathElements>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Spec.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 
