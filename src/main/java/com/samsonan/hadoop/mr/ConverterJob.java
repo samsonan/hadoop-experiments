@@ -14,6 +14,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.log4j.Logger;
 
 /**
  * Exchange Rates MapReduce Driver class.
@@ -22,15 +23,11 @@ import org.apache.hadoop.util.ToolRunner;
  */
 public class ConverterJob extends Configured implements Tool {
 
-	private final static String INSTANCE_NAME = "exchange rates converter";
-
-	//parameter which defines file names for different input data types 
-	//  e.g "exchange_rates" or "contracts"
-	private final static String CONFIG_PARAM_NAME = "converter.configuration.name";
-	private final static String CONFIG_PARAM_VALUE = "exchange_rates";
+	private static Logger LOG = Logger.getLogger(ConverterJob.class);
 	
-	//path to configuration files (file with header columns, xsl, xsd) on hdfs
-	private final static String CONF_PATH = "/user/cloudera/converter/";	
+	private final static String PARAM_INSTANCE_NAME = "instance.name";
+	private final static String PARAM_CONFIG_NAME = "converter.configuration.name";
+	private final static String PARAM_CONFIG_PATH = "converter.configuration.path";	
 	
 	public static void main(String[] args) throws Exception {
 		int exitCode = ToolRunner.run(new ConverterJob(), args);
@@ -41,10 +38,21 @@ public class ConverterJob extends Configured implements Tool {
 	public int run(String[] args) throws Exception {
 		
 		Configuration conf = getConf();
+		conf.addResource("converter-configuration.xml");
 		
-		conf.set(CONFIG_PARAM_NAME, CONFIG_PARAM_VALUE);
+		String configurationName = conf.get(PARAM_CONFIG_NAME);
+		String configurationPath = conf.get(PARAM_CONFIG_PATH);
 		
-		Job job = new Job(conf, INSTANCE_NAME);
+		LOG.info("Converter Job: {configurationName:" + configurationName + "; "
+				+ "configurationPath:" + configurationPath + "}");
+		
+		if (configurationName == null)
+			throw new Exception ("Mandatory parameter " + PARAM_CONFIG_NAME + " is not set");
+		
+		if (configurationPath == null)
+			throw new Exception ("Mandatory parameter " + PARAM_CONFIG_PATH + " is not set");
+		
+		Job job = new Job(conf, conf.get(PARAM_INSTANCE_NAME));
 		job.setJarByClass(ConverterJob.class);
 		job.setMapperClass(CsvToXmlMapper.class);
 		job.setReducerClass(XsltReducer.class);
@@ -55,9 +63,9 @@ public class ConverterJob extends Configured implements Tool {
 	    
 	    //e.g. /user/cloudera/converter/exchange_rates.xsd#exchange_rates.xsd
 	    //putting files in the  cache to use later in map/reduce jobs
-		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".header#" + CONFIG_PARAM_VALUE + ".header"), job.getConfiguration());
-		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsl#" + CONFIG_PARAM_VALUE + ".xsl"), job.getConfiguration());
-		DistributedCache.addCacheFile(new URI(CONF_PATH + CONFIG_PARAM_VALUE + ".xsd#" + CONFIG_PARAM_VALUE + ".xsd"), job.getConfiguration());
+		DistributedCache.addCacheFile(new URI(configurationPath + configurationName + ".header#" + configurationName + ".header"), job.getConfiguration());
+		DistributedCache.addCacheFile(new URI(configurationPath + configurationName + ".xsl#" + configurationName + ".xsl"), job.getConfiguration());
+		DistributedCache.addCacheFile(new URI(configurationPath + configurationName + ".xsd#" + configurationName + ".xsd"), job.getConfiguration());
 	
 		FileInputFormat.addInputPath(job, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job, new Path(args[1]));

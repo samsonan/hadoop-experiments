@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<configuration>
+	<property>
+		<name>instance.name</name>
+		<value>exchange rates converter</value>
+	</property>
+	<property>
+		<name>converter.configuration.name</name>
+		<value>exchange_rates</value>
+	</property>
+	<property>
+		<name>converter.configuration.path</name>
+		<value>/user/cloudera/converter/</value>
+	</property>
+</configuration>

@@ -36,7 +36,6 @@ All paths and URLs are applicable for Cloudera Quickstart VM 5.5
     - Apply XSL transformation to XMLs in the values
     - Write resulting XML to sequence files
     - Write <key, seq file name> to reducer output
-  
 
 Both mapper and reducer are generic, not specific to incoming data. In order to work:
   1. "converter.configuration.name" parameter should be set with the simlink names of XSD/XSL/HEADER files
@@ -45,6 +44,9 @@ Both mapper and reducer are generic, not specific to incoming data. In order to 
    - "<conf name>.header" - file with the CSV header names (for mapper)
    - "<conf name>.xsl" - xsl transformation (for reducer)
    XSD/XSL/HEADER file examples: /conf/exchange_rates/
+
+MR driver class is also made generic, with the configuration read from converter-configuration.xml, which should be in classpath.README.md
+/conf/converter-configuration.xml is the example of such file listing all mandatory params.
    
   **Dependencies & libs:**
   /lib/saxon9*.jar - saxon libs should be provided manually, cannot use maven repository, as saxon HE-edition doesnt allow to use java methods in XSLT
