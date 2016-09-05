@@ -45,7 +45,7 @@ Both mapper and reducer are generic, not specific to incoming data. In order to 
    - "<conf name>.xsl" - xsl transformation (for reducer)
    XSD/XSL/HEADER file examples: /conf/exchange_rates/
 
-MR driver class is also made generic, with the configuration read from converter-configuration.xml, which should be in classpath.README.md
+MR driver class is also made generic, with the configuration read from converter-configuration.xml, which should be in classpath.
 /conf/converter-configuration.xml is the example of such file listing all mandatory params.
    
   **Dependencies & libs:**
@@ -56,7 +56,7 @@ MR driver class is also made generic, with the configuration read from converter
   **Cmds:**
 ```
   $ export LIBJARS=/local/path/to/saxon9-9.1.0.6.jar,/local/path/to/saxon9-dom-9.1.0.6.jar
-  $ export HADOOP_CLASSPATH=/local/path/to/saxon9-9.1.0.6.jar:/local/path/to/saxon9-dom-9.1.0.6.jar
+  $ export HADOOP_CLASSPATH=/local/path/to/saxon9-9.1.0.6.jar:/local/path/to/saxon9-dom-9.1.0.6.jar:/local/path/to/converter-configuration.xml
   $ hadoop jar hadoop-experiments-0.1.2-SNAPSHOT.jar -libjars $LIBJARS  /hdfs/input/path/ /hdfs/output/path/
 ```
 
